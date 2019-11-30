@@ -1,14 +1,45 @@
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 
+void menu();
+void check_menu(int a);
 int get_nick();
+void result(int a);
 
 int main(){
-	get_nick();
+	menu();
+	//get_nick();
 	return 0;
+}
+
+void menu(){
+	int a;
+	printf("1. 게임시작\n");
+	printf("2. 최근 10경기 보기\n");
+	printf("3. 게임종료\n");
+	scanf("%d", &a);
+	check_menu(a);
+}
+void check_menu(int a)
+{
+if(a<1||a>3)
+	menu();
+else
+result(a);
+}
+
+void result(int a)
+{
+if(a==1)
+get_nick();
+else if(a==2)
+printf("하이");
+else if(a==3)
+printf("게임종료");
 }
 
 int get_nick(){

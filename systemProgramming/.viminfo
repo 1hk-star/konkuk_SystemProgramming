@@ -8,10 +8,11 @@
 # hlsearch on (H) or off (h):
 ~h
 # Command Line History (newest to oldest):
-:q!
 :q
-:wq!
+:q1
 :wq
+:q!
+:wq!
 
 # Search String History (newest to oldest):
 
@@ -27,11 +28,32 @@
 
 # File marks:
 '0  1  0  ~/txt.txt
-'1  5  0  ~/txt.txt
-'2  1  3  ~/asd.txt
+'1  1  0  ~/main.c
+'2  157  16  ~/playjustp1gcc.c
+'3  45  0  ~/map1open.c
+'4  90  0  ~/main.c
+'5  94  0  ~/playjustp1.c
+'6  1  1  ~/select_maze.c
+'7  110  0  ~/playjustp1gcc.c
+'8  71  0  ~/select_maze.c
+'9  78  0  ~/select_maze.c
 
 # Jumplist (newest first):
 -'  1  0  ~/txt.txt
+-'  1  0  ~/main.c
+-'  157  16  ~/playjustp1gcc.c
+-'  1  0  ~/playjustp1gcc.c
+-'  45  0  ~/map1open.c
+-'  1  0  ~/map1open.c
+-'  90  0  ~/main.c
+-'  94  0  ~/playjustp1.c
+-'  1  0  ~/playjustp1.c
+-'  1  1  ~/select_maze.c
+-'  110  0  ~/playjustp1gcc.c
+-'  71  0  ~/select_maze.c
+-'  78  0  ~/select_maze.c
+-'  153  0  ~/select_maze.c
+-'  83  17  ~/select_maze.c
 -'  5  0  ~/txt.txt
 -'  1  3  ~/asd.txt
 -'  1  3  ~/asd.txt
@@ -42,6 +64,57 @@
 -'  1  3  ~/asd.txt
 -'  1  3  ~/asd.txt
 -'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  45  0  ~/map1open.c
 
 # History of marks within files (newest to oldest):
 
@@ -52,6 +125,32 @@
 	+	1	12
 	+	5	33
 	+	3	2
+
+> ~/playjustp1gcc.c
+	"	157	16
+
+> ~/map1open.c
+	"	45	0
+
+> ~/main.c
+	"	90	0
+
+> ~/playjustp1.c
+	"	94	0
+
+> ~/select_maze.c
+	"	1	1
+	^	1	2
+	.	1	2
+	+	152	1
+	+	1	1
+	+	83	18
+	+	83	18
+	+	1	0
+	+	153	2
+	+	153	0
+	+	77	1
+	+	1	2
 
 > ~/asd.txt
 	"	1	3
