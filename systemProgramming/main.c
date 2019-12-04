@@ -5,42 +5,51 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-void menu();
-void check_menu(int a);
+void show_main_menu();
+void game_play();
 int get_nick();
-void result(int a);
+
 
 int main(){
-	menu();
+	show_main_menu();
 	//get_nick();
 	return 0;
 }
 
-void menu(){
-	int a;
-	printf("1. 게임시작\n");
-	printf("2. 최근 10경기 보기\n");
-	printf("3. 게임종료\n");
-	scanf("%d", &a);
-	check_menu(a);
-}
-void check_menu(int a)
-{
-if(a<1||a>3)
-	menu();
-else
-result(a);
+void show_main_menu(){
+    int a;
+    printf("1. 게임시작\n 2. 최근 10경기 결과보기\n 3. 게임종료\n");
+    scanf("%d", &a);
+
+    while(1 <= a && a <= 3){
+	
+        if(a == 1){
+            game_play();
+            // get_nick();
+	}
+        else if(a == 2){
+	    printf("2번 메뉴\n");
+            
+	}
+        else if(a == 3){
+	    printf("3번 메뉴\n");
+            return;
+	}
+        else{
+            printf("1 ~ 3사이의 정수를 입력하세요.\n");
+            continue; 
+        }
+        break;
+    }
+
 }
 
-void result(int a)
-{
-if(a==1)
-get_nick();
-else if(a==2)
-printf("하이");
-else if(a==3)
-printf("게임종료");
+void game_play(){
+    get_nick();
+
 }
+
+
 
 int get_nick(){
 	char nick1[20];

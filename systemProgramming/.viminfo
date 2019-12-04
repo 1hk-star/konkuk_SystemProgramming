@@ -9,8 +9,9 @@
 ~h
 # Command Line History (newest to oldest):
 :q
-:q1
 :wq
+:ㅈㅂ
+:q1
 :q!
 :wq!
 
@@ -27,28 +28,38 @@
 	e
 
 # File marks:
-'0  1  0  ~/txt.txt
-'1  1  0  ~/main.c
-'2  157  16  ~/playjustp1gcc.c
-'3  45  0  ~/map1open.c
-'4  90  0  ~/main.c
-'5  94  0  ~/playjustp1.c
-'6  1  1  ~/select_maze.c
-'7  110  0  ~/playjustp1gcc.c
-'8  71  0  ~/select_maze.c
-'9  78  0  ~/select_maze.c
+'0  100  0  ~/main.c
+'1  39  65  ~/main.c
+'2  36  18  ~/main.c
+'3  21  52  ~/main.c
+'4  9  16  ~/main.c
+'5  44  0  ~/main.c
+'6  1  0  ~/main.c
+'7  82  0  ~/select_maze.c
+'8  1  0  ~/select_maze.c
+'9  82  0  ~/select_maze
 
 # Jumplist (newest first):
--'  1  0  ~/txt.txt
+-'  100  0  ~/main.c
 -'  1  0  ~/main.c
+-'  39  65  ~/main.c
+-'  36  18  ~/main.c
+-'  21  52  ~/main.c
+-'  9  16  ~/main.c
+-'  44  0  ~/main.c
+-'  82  0  ~/select_maze.c
+-'  1  0  ~/select_maze.c
+-'  82  0  ~/select_maze
+-'  1  0  ~/select_maze
+-'  68  0  ~/select_maze.c
+-'  1  0  ~/txt.txt
 -'  157  16  ~/playjustp1gcc.c
 -'  1  0  ~/playjustp1gcc.c
 -'  45  0  ~/map1open.c
 -'  1  0  ~/map1open.c
--'  90  0  ~/main.c
+-'  103  0  ~/main.c
 -'  94  0  ~/playjustp1.c
 -'  1  0  ~/playjustp1.c
--'  1  1  ~/select_maze.c
 -'  110  0  ~/playjustp1gcc.c
 -'  71  0  ~/select_maze.c
 -'  78  0  ~/select_maze.c
@@ -115,8 +126,91 @@
 -'  1  3  ~/asd.txt
 -'  1  3  ~/asd.txt
 -'  45  0  ~/map1open.c
+-'  1  0  ~/txt.txt
+-'  157  16  ~/playjustp1gcc.c
+-'  1  0  ~/playjustp1gcc.c
+-'  45  0  ~/map1open.c
+-'  1  0  ~/map1open.c
+-'  94  0  ~/playjustp1.c
+-'  1  0  ~/playjustp1.c
+-'  110  0  ~/playjustp1gcc.c
+-'  5  0  ~/txt.txt
+-'  1  3  ~/asd.txt
+-'  1  3  ~/asd.txt
+-'  2  32  ~/txt.txt
 
 # History of marks within files (newest to oldest):
+
+> ~/main.c
+	"	100	0
+	^	39	66
+	.	39	65
+	+	26	1
+	+	24	0
+	+	22	0
+	+	21	0
+	+	20	3
+	+	21	3
+	+	22	3
+	+	24	3
+	+	26	7
+	+	28	11
+	+	30	7
+	+	31	4
+	+	34	7
+	+	35	4
+	+	37	2
+	+	38	12
+	+	38	12
+	+	40	11
+	+	42	7
+	+	43	3
+	+	26	15
+	+	30	20
+	+	34	20
+	+	24	28
+	+	25	0
+	+	8	14
+	+	14	10
+	+	19	14
+	+	31	28
+	+	33	0
+	+	32	12
+	+	27	23
+	+	50	0
+	+	48	14
+	+	28	14
+	+	9	16
+	+	21	55
+	+	38	0
+	+	36	18
+	+	38	12
+	+	41	7
+	+	39	65
+
+> ~/select_maze.c
+	"	82	0
+	^	42	4
+	.	42	3
+	+	152	1
+	+	1	1
+	+	83	18
+	+	83	18
+	+	1	0
+	+	153	2
+	+	153	0
+	+	77	1
+	+	1	2
+	+	41	24
+	+	42	3
+
+> ~/select_maze
+	"	82	0
+	^	82	0
+	.	41	17
+	+	81	1
+	+	1	1
+	+	41	17
 
 > ~/txt.txt
 	"	1	0
@@ -132,25 +226,8 @@
 > ~/map1open.c
 	"	45	0
 
-> ~/main.c
-	"	90	0
-
 > ~/playjustp1.c
 	"	94	0
-
-> ~/select_maze.c
-	"	1	1
-	^	1	2
-	.	1	2
-	+	152	1
-	+	1	1
-	+	83	18
-	+	83	18
-	+	1	0
-	+	153	2
-	+	153	0
-	+	77	1
-	+	1	2
 
 > ~/asd.txt
 	"	1	3

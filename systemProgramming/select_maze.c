@@ -39,7 +39,7 @@ int readline(int fd, int *buf, int nbytes) {
 
 
 int** select_maze(void){
-	srand((unsigned)time(NULL));
+    srand((unsigned)time(NULL));
 
     int maze[ROWS][COLS] = {0};
 
@@ -63,12 +63,16 @@ int** select_maze(void){
     
     for(int i = 0; i < ROWS; i++){
         readline(mapfd, maze[i], 10); // 한 줄식 ROWS번 읽음 ==> 10x10을 읽게 된다.
+
+        for(int j = 0; j < COLS; j++){
+            maze[i][j] -= '0';
+        }
     }
 
     // // maze에 잘 저장되었나 출력을 통해 test하기 위한 구문
     // for(int i = 0; i < ROWS; i++){
     //     for(int j = 0; j < COLS; j++){
-    //         printf("%d ", maze[i][j] - '0');
+    //         printf("%d ", maze[i][j]);
     //     }
     //     printf("\n");
     // }

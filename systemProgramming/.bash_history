@@ -90,3 +90,39 @@ vi txt.txt
 ls
 clear
 exit
+ls
+vi main.c
+ls
+ls
+vi select_maze.c
+ls
+vi main.c
+rm select_maze.c
+vi select_maze
+ls
+vi select_maze.c
+mv select_maze select_maze.c
+ls
+vi select_maze.c
+ls
+ls
+vi main.c
+ls
+ls
+rm main.c.swp
+ls
+vi main.c
+rm .main.c.wsp
+rm .main.c.swp
+ls
+rm .main.c.swp
+ls
+vi main.c
+vi main.c
+vi main.c
+clear
+vi main.c
+vi main.c
+vi main.c
+ls
+vi main.c
