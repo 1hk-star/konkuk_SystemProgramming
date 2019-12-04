@@ -126,3 +126,23 @@ vi main.c
 vi main.c
 ls
 vi main.c
+ls
+vi main.c
+ls
+vi playjustp1gcc.c
+vi playjustp1.c
+ls
+ls
+vi map2open.c
+ls -l
+ls
+clear
+ls
+rm iwantaa
+vi iwantaaaa
+rm iwantaaaa
+clear
+ls
+vi play1204.c
+ls
+ls

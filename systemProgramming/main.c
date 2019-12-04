@@ -8,7 +8,7 @@
 void show_main_menu();
 void game_play();
 int get_nick();
-
+void show_result();
 
 int main(){
 	show_main_menu();
@@ -18,18 +18,16 @@ int main(){
 
 void show_main_menu(){
     int a;
-    printf("1. 게임시작\n 2. 최근 10경기 결과보기\n 3. 게임종료\n");
-    scanf("%d", &a);
-
-    while(1 <= a && a <= 3){
-	
+    while(1){
+	printf("1. 게임시작\n 2. 최근 10경기 결과보기\n 3. 게임종료\n");
+	scanf("%d", &a);	
         if(a == 1){
             game_play();
             // get_nick();
 	}
         else if(a == 2){
 	    printf("2번 메뉴\n");
-            
+            show_result();
 	}
         else if(a == 3){
 	    printf("3번 메뉴\n");
@@ -39,7 +37,7 @@ void show_main_menu(){
             printf("1 ~ 3사이의 정수를 입력하세요.\n");
             continue; 
         }
-        break;
+       
     }
 
 }
@@ -97,4 +95,17 @@ int get_nick(){
 	}
 	return 0;
 	
+
+}
+
+void show_result() {
+	pid_t pid;
+	int status;
+	if ((pid = fork()) == 0) { //자식 프로세스
+		execl("/usr/bin/tail", "tail", "-n10", "./result.txt", NULL);
+	}
+	else { //부모 프로세스
+		pid = wait(&status);
+		// 자식 프로세스 종료 대기
+	}
 }
