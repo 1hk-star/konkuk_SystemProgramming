@@ -146,3 +146,144 @@ ls
 vi play1204.c
 ls
 ls
+ls
+cd ..
+ls
+pwd
+ls
+ls -al
+git log
+git add *
+git commit -m "12/04/19:13"
+git config --global user.email "1hk_star@naver.com"
+git config --global user.name "1hk-star"
+git push
+git push
+git push
+git log
+git add *
+git commit -m "2019/12/04/19:17"
+git log
+git push
+d
+ddsad
+asd
+wqe
+qw
+esadsa
+ls
+ls
+git log
+git add *
+git commit -m "12/04/22:01"
+git push
+123qwe
+ls
+rm playjust1gcc.c
+rm playjustp1gcc.c
+ls
+ls -ltr
+ls
+clear
+ls
+vi map1.txt
+vi map1.txt
+vi map2.txt
+ls
+rm play1204.c
+ls
+vi play1204.c
+ls
+rm play1204.c
+ls
+clear
+vi play1204.c
+ls
+vi main.c
+ls
+cd ..
+ls
+cd ..
+ls
+cat /etc/passwd
+/bin/bash
+cd /etc/passwd
+pwd
+ls
+ls
+ls -al
+cd /etc
+ls
+ls -al
+ls
+cd ..
+ls
+cd /usr/bin
+ls
+ls -al
+/pwd
+pwd
+cd
+cd ..
+cd /
+pwd
+ls
+ls -al
+ls -l /tmp
+cd tmp
+ls
+cd ..
+ls -ld /tmp
+alias
+ls -al etc/password
+cat /etc/passwd
+ls
+vi play1204.c
+ls
+vi play1204.c
+vi play1210.c
+ls
+vi play1210.c
+ls
+vi main.c
+clear
+ls
+cd ..
+which
+ls
+vi select_maze.c
+rm select_maze.c
+ls
+vi timermove.c
+vi map2open.c
+vi txt.txt
+rm txt.txt
+./abcd
+ls
+./e_main
+vi alarm.c
+clear
+ls
+./re
+vi re.c
+vi play11.c
+vi play1211.c
+vi play1204.c
+vi play1204.c
+vi play1204.c
+vi play1204.c
+vi play1204.c
+vi play1204.c
+ls
+vi play1212.c
+ls
+vi play1212.c
+rm play1212.c
+vi play1212.c
+ls
+vi play1212.c
+ls
+ls
+ls
+ls
+exit

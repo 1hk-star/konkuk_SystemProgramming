@@ -1,15 +1,12 @@
 #include <errno.h>
-#include <termio.h>
-#include <termios.h>
-#include <signal.h>
-#include <sys/time.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/wait.h>
+#include <termio.h>
+#include <termios.h>
 
 #define ROWS 10
 #define COLS 10
@@ -32,73 +29,175 @@
 #define DEST_2          5
 #define CUR_POSITION_1  6
 #define CUR_POSITION_2  7
-#define MAX_TIME        30
 
 int map[ROWS][COLS]; // 일단 전역으로 만들고 나중에 멤버로 넣든지 하기
-int timeCount = MAX_TIME;
-char player1_nick;
-char player2_nick;
 
 typedef struct player{
    int x;
    int y;
 } Player;
-void gotoxy(int x,int y);
-void timer(int signo);
-int createTimer(timer_t* timerID, int sec, int msec);
-int kbhit(void);
-int getch(void);
-int readline(int fd, int *buf, int nbytes);
-void printMap(int map[ROWS][COLS]);
-void showStatus(const int flag, const char* player1_nick, const char* player2_nick);
-int select_map();
-void show_main_menu();
-void game_play();
-int get_nick();
-void show_result();
 
-int main(){
-	show_main_menu();
-	//get_nick();
-	return 0;
+int kbhit(void)
+{
+   struct termios oldt, newt;
+   int ch;
+   tcgetattr(STDIN_FILENO, &oldt);
+   newt = oldt;
+   newt.c_lflag &= ~(ICANON | ECHO);
+   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+   ch = getchar();
+   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+   return ch;
 }
 
-void show_main_menu(){
-    int a;
-    while(1){
-	printf("1. 게임시작\n 2. 최근 10경기 결과보기\n 3. 게임종료\n");
-	scanf("%d", &a);	
-        if(a == 1){
-            game_play();
-            // get_nick();
-	}
-        else if(a == 2){
-	    printf("2번 메뉴\n");
-            show_result();
-	}
-        else if(a == 3){
-	    printf("3번 메뉴\n");
-            return;
-	}
-        else{
-            printf("1 ~ 3사이의 정수를 입력하세요.\n");
-            continue; 
+int getch(void) { 
+   int ch;
+   struct termios old;
+   struct termios new;
+   tcgetattr(0, &old);
+   new = old;
+   new.c_lflag &= ~(ICANON|ECHO);
+   new.c_cc[VMIN] = 1;
+   new.c_cc[VTIME] = 0;
+   tcsetattr(0, TCSAFLUSH, &new);
+   ch = getchar();
+   tcsetattr(0, TCSAFLUSH, &old);
+   return ch;
+}
+
+void gotoxy(int x, int y) {
+     printf("\033[%d;%df", y, x);
+     // fflush(stdout);
+}
+
+int readline(int fd, int *buf, int nbytes) {
+   int numread = 0;
+   int returnval;
+
+   while (numread < nbytes + 2) {
+      returnval = read(fd, buf + numread, 1);
+      if ((returnval == -1) && (errno == EINTR))
+         continue;
+      if ( (returnval == 0) && (numread == 0) )
+         return 0;
+      if (returnval == 0)
+         break;
+      if (returnval == -1)
+         return -1;
+      numread++;  
+
+      // '\n'을 13(Carriage Return)과 10(Line Feed) 2개로 읽어서 이를 처리.
+      if (buf[numread-1] == 13) {
+        continue;
+      }
+      else if(buf[numread-1] == 10){
+          return (numread - 2); // 맞는지 모르겠지만 13(Carriage Return)과 10(Line Feed)제외한 숫자를 읽은 개수 return.
+      }
+
+   }    
+   errno = EINVAL;
+   return -1;
+}
+
+void printMap(int map[ROWS][COLS]) {
+
+   for (int i = 0; i < ROWS; i++) {
+      for (int j = 0; j < COLS; j++) {
+         switch (map[i][j]) {
+         case ROAD:
+            printf("□ "); // 갈 수 있는 길
+            break;
+         case WALL:
+            printf("■ "); // 벽
+            break;
+         case START_1:
+            printf("1 "); // 플레이어 1의 시작점
+            break;
+         case DEST_1:
+            printf("1 "); // 플레이어 1의 도착점
+            break;
+         case START_2:
+            printf("2 "); // 플레이어 2의 시작점
+            break;
+         case DEST_2:
+            printf("2 "); // 플레이어 2의 도착점
+            break;
+         case CUR_POSITION_1:
+            printf("★ "); // 플레이어 1의 현재 위치
+            break;
+         case CUR_POSITION_2:
+            printf("♥ "); // 플레이어 2의 현재 위치
+            break;
+         default:
+            break;
+         }
+      }
+      printf("\n");
+   }
+}
+
+void showStatus(const int flag, const char* player1_nick, const char* player2_nick){
+   if(flag == 1){
+      printf("< %s의 차례 >\n", player1_nick);
+   }
+   else{
+      printf("< %s의 차례 >\n", player2_nick);
+   }
+}
+
+
+
+
+int select_map(){
+	 srand((unsigned)time(NULL));
+
+    int mapindex = (rand() % 2) + 1; // map1.txt과 map2.txt 중 랜덤으로 하나 고르기 위함.
+    int mapfd;
+
+    if(mapindex == 1){
+        if( (mapfd = open("map1.txt", O_RDONLY)) == -1){
+            perror("Failed to open map file");
+            return -1;
+        }   
+
+    }
+    else if(mapindex == 2){
+        if( (mapfd = open("map2.txt", O_RDONLY)) == -1){
+            perror("Failed to open map file");
+            return -1;
+        }   
+
+    }
+    
+    for(int i = 0; i < ROWS; i++){
+        readline(mapfd, map[i], 10); // 한 줄식 ROWS번 읽음 ==> 10x10을 읽게 된다.
+
+        for(int j = 0; j < COLS; j++){
+            map[i][j] -= '0';
         }
-       
     }
 
+    // // maze에 잘 저장되었나 출력을 통해 test하기 위한 구문
+    // for(int i = 0; i < ROWS; i++){
+    //     for(int j = 0; j < COLS; j++){
+    //         printf("%d ", maze[i][j]);
+    //     }
+    //     printf("\n");
+    // }
+
+    return 0;
 }
 
-void game_play(){
-    get_nick();
-  /* ************ 추가로 해야 될 점 *******************
+
+int main() {
+
+
+   /* ************ 추가로 해야 될 점 *******************
    지금 map이 전역변수로 선언되어 있는데 이것을 지역 변수로 만들고
    select_map(map)과 같이 select_map함수를 이용해서 초기화 시키기
    */
 
-    timer_t timerID;
 
-    createTimer(&timerID, 1, 0);
 
    if(select_map(map) == -1){
       perror("Fail To Seelct Maze!!");
@@ -131,6 +230,7 @@ void game_play(){
    player2.y = ROWS - 1;
    player2.x = COLS - 1;
    
+
    map[player1.y][player1.x] = CUR_POSITION_1;
    map[player2.y][player2.x] = CUR_POSITION_2;
    map[0][0] = DEST_2;
@@ -146,13 +246,6 @@ void game_play(){
    int preValue = -1;
    for (; ;)
    {
-      printf("timeCount : %d", timeCount);
-      if(timeCount == 0){
-         playerFlag = playerFlag % 2 + 1;
-         timeCount = MAX_TIME;
-         continue;
-      }
-
       if(playerFlag == 1){
          
          keytemp = getch();
@@ -281,8 +374,6 @@ void game_play(){
       
       else if(playerFlag == 2){
          
-        
-
          keytemp = getch();
          switch (keytemp)
          {
@@ -295,13 +386,13 @@ void game_play(){
                   playerFlag = playerFlag % 2 + 1;
                            
                }
-               else if(map[player2.y-1][player2.x] == DEST_2){
+               else if(map[player2.y-1][player2.x] == DEST_1){
                      playerFlag = 3;
                      //gotoxy(50, 10);
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
-                     printf("■    %s승리!!■", "player2");
+                     printf("■    %s승리!!■", "player1");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
@@ -323,13 +414,13 @@ void game_play(){
                   playerFlag = playerFlag % 2 + 1;
 
                }
-               else if(map[player2.y+1][player2.x] == DEST_2){
+               else if(map[player2.y+1][player2.x] == DEST_1){
                      playerFlag = 3;
                      //gotoxy(50, 10);
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
-                     printf("■    %s승리!!■", "player2");
+                     printf("■    %s승리!!■", "player1");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
@@ -350,13 +441,13 @@ void game_play(){
                      player2.x = COLS - 1;
                      playerFlag = playerFlag % 2 + 1;
                   }
-                  else if(map[player2.y][player2.x-1] == DEST_2){
+                  else if(map[player2.y][player2.x-1] == DEST_1){
                      playerFlag = 3;
                      //gotoxy(50, 10);
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
-                     printf("■    %s승리!!■", "player2");
+                     printf("■    %s승리!!■", "player1");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
@@ -377,13 +468,13 @@ void game_play(){
                         player2.x = COLS - 1;
                         playerFlag = playerFlag % 2 + 1;
                   }
-                  else if(map[player2.y][player2.x + 1] == DEST_2){
+                  else if(map[player2.y][player2.x + 1] == DEST_1){
                      playerFlag = 3;
                      //gotoxy(50, 10);
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
-                     printf("■    %s승리!!■", "player2");
+                     printf("■    %s승리!!■", "player1");
                      printf("■                       ■\n");
                      printf("■                       ■\n");
                      printf("■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■\n");
@@ -410,282 +501,9 @@ void game_play(){
       if(count == 3){
          count = 0;
          playerFlag = playerFlag % 2 + 1;
-         timeCount = MAX_TIME;
-         gotoxy(0, 18);
-         printf("턴이 종료됩니다.\n");
-         sleep(1);
-         // timer_delete(&timerID);
-         // createTimer(&timerID, 5, 0);
       }
-
    }
 
 
    return 0;
-
-
 }
-
-
-
-int get_nick(){
-	char nick1[20];
-	char nick2[20];
-	int pipe_fd[2];
-	char buff[100];
-	pid_t pid;
-	int status;
-	
-	if(-1 == pipe(pipe_fd)){
-		perror("파이프 생성 실패");
-		exit(1);
-	}
-
-	printf("플레이어1의 닉네임 : ");
-	scanf("%s",nick1);
-	player1=nick1;
-
-	if((pid = fork()) == 0){ //자식 프로세스
-		while(1){
-			printf("플레이어2의 닉네임 : ");
-			scanf("%s", nick2);
-			if(!strcmp(nick1,nick2)){
-				printf("닉네임이 중복되었습니다. 플레이어2의 닉네임을 다시 입력해주세요.\n");
-			}
-			else
-				break;
-		}
-		write(pipe_fd[1],nick2,strlen(nick2)); //중복이 아닐 시 부모로 데이터 전송
-		printf("파이프 전송\n");
-		exit(1);
-		
-	}
-	else { //부모 프로세스
-		pid = wait(&status);
-		// 자식 프로세스 종료 대기
-		if(status){
-			memset(nick2,0,20);
-			read(pipe_fd[0],nick2,20); //자식으로부터 닉네임을 받아옴
-			printf("플레이어1의 닉네임 : %s, 플레이어 2의 닉네임 : %s\n",nick1, nick2);
-			}
-		else{
-			printf("뭔가 오류임\n");
-		}
-		
-	}
-	return 0;
-	
-
-}
-
-void show_result() {
-	pid_t pid;
-	int status;
-	if ((pid = fork()) == 0) { //자식 프로세스
-		execl("/usr/bin/tail", "tail", "-n10", "./result.txt", NULL);
-	}
-	else { //부모 프로세스
-		pid = wait(&status);
-		// 자식 프로세스 종료 대기
-	}
-}
-
-void gotoxy(int x,int y)    
-{
-    printf("%c[%d;%df",0x1B,y,x);
-}
-
-void timer(int signo)
-{
-    gotoxy(0, 2);
-    
-    if(timeCount > 0){
-        timeCount = timeCount - 1;
-        printf("남은 시간 : %d초", timeCount);
-    }
-
-}
-
-int createTimer(timer_t* timerID, int sec, int msec){
-   struct sigevent    te;
-   struct itimerspec   its;
-   struct sigaction    sa;
-   int signo = SIGALRM;
-
-   // sa.sa_flags = SA_SIGINFO;
-   //sa.sa_sigaction = timer;
-   sa.sa_handler = timer;
-   sa.sa_flags = 0;
-   if(sigemptyset(&sa.sa_mask) == -1 || sigaction(signo, &sa, NULL) == -1){
-      perror("Fail to register signal handler!!");
-      return -1;
-   }
-
-   // te.sigev_notify = SIGEV_SIGNAL;  
-   // te.sigev_signo = signo;  
-   // te.sigev_value.sival_ptr = timerID;  
-
-   // timer_create(CLOCK_REALTIME, &te, timerID);  
-   if(timer_create(CLOCK_REALTIME, NULL, timerID) == -1){
-      perror("Failed to Create Timer!!");
-      return -1;
-   }
-
-   its.it_interval.tv_sec = sec;
-   // its.it_interval.tv_nsec = msec * 1000000;  
-   its.it_interval.tv_nsec = 0;
-   its.it_value.tv_sec = sec;
-    
-   // its.it_value.tv_nsec = msec * 1000000;
-   its.it_value.tv_nsec = 0;
-   
-   return timer_settime(*timerID, 0, &its, NULL);  
-}
-
-int kbhit(void)
-{
-   struct termios oldt, newt;
-   int ch;
-   tcgetattr(STDIN_FILENO, &oldt);
-   newt = oldt;
-   newt.c_lflag &= ~(ICANON | ECHO);
-   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-   ch = getchar();
-   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-   return ch;
-}
-
-int getch(void) { 
-   int ch;
-   struct termios old;
-   struct termios new;
-   tcgetattr(0, &old);
-   new = old;
-   new.c_lflag &= ~(ICANON|ECHO);
-   new.c_cc[VMIN] = 1;
-   new.c_cc[VTIME] = 0;
-   tcsetattr(0, TCSAFLUSH, &new);
-   ch = getchar();
-   tcsetattr(0, TCSAFLUSH, &old);
-   return ch;
-}
-
-int readline(int fd, int *buf, int nbytes) {
-   int numread = 0;
-   int returnval;
-
-   while (numread < nbytes + 2) {
-      returnval = read(fd, buf + numread, 1);
-      if ((returnval == -1) && (errno == EINTR))
-         continue;
-      if ( (returnval == 0) && (numread == 0) )
-         return 0;
-      if (returnval == 0)
-         break;
-      if (returnval == -1)
-         return -1;
-      numread++;  
-
-      // '\n'을 13(Carriage Return)과 10(Line Feed) 2개로 읽어서 이를 처리.
-      if (buf[numread-1] == 13) {
-        continue;
-      }
-      else if(buf[numread-1] == 10){
-          return (numread - 2); // 맞는지 모르겠지만 13(Carriage Return)과 10(Line Feed)제외한 숫자를 읽은 개수 return.
-      }
-
-   }    
-   errno = EINVAL;
-   return -1;
-}
-
-void printMap(int map[ROWS][COLS]) {
-   gotoxy(0, 4);
-   for (int i = 0; i < ROWS; i++) {
-      for (int j = 0; j < COLS; j++) {
-         switch (map[i][j]) {
-         case ROAD:
-            printf("□ "); // 갈 수 있는 길
-            break;
-         case WALL:
-            printf("■ "); // 벽
-            break;
-         case START_1:
-            printf("1 "); // 플레이어 1의 시작점
-            break;
-         case DEST_1:
-            printf("1 "); // 플레이어 1의 도착점
-            break;
-         case START_2:
-            printf("2 "); // 플레이어 2의 시작점
-            break;
-         case DEST_2:
-            printf("2 "); // 플레이어 2의 도착점
-            break;
-         case CUR_POSITION_1:
-            printf("★ "); // 플레이어 1의 현재 위치
-            break;
-         case CUR_POSITION_2:
-            printf("♥ "); // 플레이어 2의 현재 위치
-            break;
-         default:
-            break;
-         }
-      }
-      printf("\n");
-   }
-}
-
-void showStatus(const int flag, const char* player1_nick, const char* player2_nick){
-   gotoxy(0, 0);
-
-   if(flag == 1){
-      printf("< %s의 차례 >\n", player1_nick);
-   }
-   else{
-      printf("< %s의 차례 >\n", player2_nick);
-   }
-}
-
-
-
-
-int select_map(){
-    srand((unsigned)time(NULL));
-
-    int mapindex = (rand() % 2) + 1; // map1.txt과 map2.txt 중 랜덤으로 하나 고르기 위함.
-    int mapfd;
-
-    if(mapindex == 1){
-        if( (mapfd = open("map1.txt", O_RDONLY)) == -1){
-            perror("Failed to open map file");
-            return -1;
-        }   
-
-    }
-    else if(mapindex == 2){
-        if( (mapfd = open("map2.txt", O_RDONLY)) == -1){
-            perror("Failed to open map file");
-            return -1;
-        }   
-    }
-    
-    for(int i = 0; i < ROWS; i++){
-        readline(mapfd, map[i], 10); // 한 줄식 ROWS번 읽음 ==> 10x10을 읽게 된다.
-
-        for(int j = 0; j < COLS; j++){
-            map[i][j] -= '0';
-        }
-    }
-
-    // // maze에 잘 저장되었나 출력을 통해 test하기 위한 구문
-    // for(int i = 0; i < ROWS; i++){
-    //     for(int j = 0; j < COLS; j++){
-    //         printf("%d ", maze[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-
-    return 0;
-}
-
